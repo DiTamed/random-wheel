@@ -4,10 +4,10 @@ import { useRef, useEffect, useState, useCallback } from "react";
 
 /* ─── Constants ──────────────────────────────────────────── */
 const PRIZES = [
-  { name: "Giảm 10%", color: "#FF6B6B", textColor: "#fff", emoji: "🎁" },
-  { name: "Giảm 20%", color: "#FFD93D", textColor: "#1a1a1a", emoji: "🏆" },
-  { name: "Tẩy Trắng", color: "#4ECDC4", textColor: "#fff", emoji: "✨" },
-  { name: "May Mắn Lần Sau", color: "#C77DFF", textColor: "#fff", emoji: "🍀" },
+  { name: "Giảm 10%", color: "#FF6B6B", textColor: "#fff"},
+  { name: "Giảm 20%", color: "#FFD93D", textColor: "#1a1a1a"},
+  { name: "Tẩy Trắng", color: "#4ECDC4", textColor: "#fff" },
+  { name: "May Mắn Lần Sau", color: "#C77DFF", textColor: "#fff" },
 ];
 
 const BRANCHES = [
@@ -100,7 +100,6 @@ function drawWheel(canvas: HTMLCanvasElement, rotation: number) {
     ctx.font = `bold ${Math.max(13, r * 0.1)}px Inter, Arial, sans-serif`;
     ctx.fillText(PRIZES[i].name, r - 14, 5);
     ctx.font = `${Math.max(15, r * 0.11)}px Arial`;
-    ctx.fillText(PRIZES[i].emoji, r * 0.48, 6);
     ctx.restore();
   }
 
@@ -240,7 +239,7 @@ export default function SpinWheel() {
           rotRef.current = endRot;
           if (canvasRef.current) drawWheel(canvasRef.current, endRot);
           setSpinning(false);
-          setResult({ prize: PRIZES[wi].name, emoji: PRIZES[wi].emoji });
+          setResult({ prize: PRIZES[wi].name, emoji: "" });
           setModal(true);
           setConfetti(true);
           setTimeout(() => setConfetti(false), 4200);
