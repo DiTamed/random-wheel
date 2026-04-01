@@ -580,7 +580,7 @@ export default function SpinWheel() {
                     <span
                       style={{ fontSize: 13, color: "rgba(255,255,255,0.7)" }}
                     >
-                      {p.emoji} {p.name}
+                   {p.name}
                     </span>
                   </div>
                 ))}
