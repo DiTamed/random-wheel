@@ -399,7 +399,7 @@ export default function SpinWheel() {
             >
               <canvas
                 ref={canvasRef}
-                width={380}
+                width={410}
                 height={410}
                 style={{ display: "block", maxWidth: "100%" }}
               />
@@ -537,10 +537,10 @@ export default function SpinWheel() {
                 disabled={isBusy}
               >
                 {loading
-                  ? "⏳ Đang xử lý..."
+                  ? "Đang xử lý..."
                   : spinning
-                    ? "🎡 Đang quay..."
-                    : "🎰 Quay Ngay!"}
+                    ? " Đang quay..."
+                    : " Quay Ngay!"}
               </button>
             </div>
 
@@ -643,7 +643,7 @@ export default function SpinWheel() {
                 marginBottom: 8,
               }}
             >
-              🎉 Chúc Mừng!
+               Chúc Mừng!
             </div>
 
             <h2
@@ -692,7 +692,7 @@ export default function SpinWheel() {
               onClick={handleClose}
               style={{ marginTop: 28 }}
             >
-              🎉 Tuyệt Vời!
+              Tuyệt Vời!
             </button>
           </div>
         </div>
