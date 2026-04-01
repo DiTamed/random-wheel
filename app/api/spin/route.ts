@@ -25,43 +25,42 @@ function weightedRandom(): string {
   return PRIZES[PRIZES.length - 1].name;
 }
 
+/**
+ * Gửi dữ liệu lên Google Apps Script Web App.
+ * Trả về: 'ok' | 'exists' | 'error'
+ */
 async function sendToSheet(payload: {
   name: string; phone: string; branch: string; result: string;
-}) {
+}): Promise<'ok' | 'exists' | 'error'> {
   const sheetUrl = process.env.SHEET_API;
-  if (!sheetUrl) return;
-
-  const body = JSON.stringify({
-    name:   payload.name,
-    phone:  payload.phone,
-    branch: payload.branch,
-    result: payload.result,
-    time:   new Date().toISOString(),
-  });
+  if (!sheetUrl) {
+    console.error('[Sheet] SHEET_API chưa được cấu hình trong .env.local');
+    return 'error';
+  }
 
   try {
-    // Bước 1: Gửi POST – nhưng KHÔNG follow redirect tự động
-    // vì HTTP spec chuyển POST→GET khi gặp 302 (mất body)
-    const r1 = await fetch(sheetUrl, {
-      method:   'POST',
-      redirect: 'manual',
-      headers:  { 'Content-Type': 'application/json' },
-      body,
-    });
-
-    // Bước 2: Tự follow redirect (giữ nguyên POST + body)
-    const location = r1.headers.get('location');
-    const target   = location ?? sheetUrl;
-    const r2 = await fetch(target, {
+    const res = await fetch(sheetUrl, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body,
+      body: JSON.stringify({
+        name:   payload.name,
+        phone:  payload.phone,
+        branch: payload.branch,
+        result: payload.result,
+      }),
     });
 
-    const text = await r2.text();
+    const text = await res.text();
     console.log('[Sheet] response:', text);
+
+    const json = JSON.parse(text) as { status: string };
+    if (json.status === 'exists') return 'exists';
+    if (json.status === 'ok')     return 'ok';
+    return 'error';
+
   } catch (err) {
     console.error('[Sheet] fetch failed:', err);
+    return 'error';
   }
 }
 
@@ -76,8 +75,14 @@ export async function POST(req: Request) {
 
     const result = weightedRandom();
 
-    // Fire-and-forget to Google Sheets
-    void sendToSheet({ name, phone, branch, result });
+    const sheetStatus = await sendToSheet({ name, phone, branch, result });
+
+    if (sheetStatus === 'exists') {
+      return Response.json(
+        { error: 'Số điện thoại này đã tham gia rồi!' },
+        { status: 409, headers: CORS },
+      );
+    }
 
     return Response.json({ status: 'ok', result }, { status: 200, headers: CORS });
 
